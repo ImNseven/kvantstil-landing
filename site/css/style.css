@@ -104,6 +104,38 @@
   --logo: #2C3E50;
 }
 
+/* D: графит и латунь, тёмная (по умолчанию с 11.10: клиент попросил темнее) */
+[data-theme="d"] {
+  --bg: #16191D;
+  --surface: #1E2227;
+  --surface-2: #1B1F23;
+  --text: #EDEAE4;
+  --text-muted: #A9A49B;
+  --border: #31373E;
+  --primary: #2A3037;
+  --accent: #C9A15C;
+  --accent-strong: #D7B271;
+  --accent-soft: #2D2921;
+  --cta-bg: #C9A15C;
+  --cta-bg-hover: #D6B171;
+  --cta-text: #16191D;
+  --cta-dark-bg: #C9A15C;
+  --cta-dark-hover: #D6B171;
+  --cta-dark-text: #16191D;
+  --ink: #111417;
+  --ink-2: #23282E;
+  --on-ink: #F4F0E8;
+  --on-ink-muted: #BDB6AA;
+  --ink-accent: #D7B271;
+  --logo: #EDEAE4;
+  --shadow: 0 12px 32px -14px rgb(0 0 0 / .7);
+  color-scheme: dark;
+}
+[data-theme="d"] .q-error { color: #FF8F85; }
+[data-theme="d"] .q-field input.is-invalid { border-color: #E5675B; }
+[data-theme="d"] .hw-cta { border: 1px solid var(--border); }
+[data-theme="d"] .quiz::backdrop { background: rgb(0 0 0 / .7); }
+
 /* ---------- база ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 12px); }
@@ -438,20 +470,12 @@ html.is-locked { overflow: hidden; }
 .step h3 { font-size: 18px; margin: 8px 0 4px; }
 .step p { color: var(--text-muted); font-size: 15px; }
 
-/* заглушки «скоро будут фото» */
-.placeholders { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-.ph {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center;
-  aspect-ratio: 4 / 5; padding: 16px; border-radius: var(--r-card);
-  border: 1px dashed color-mix(in srgb, var(--accent) 60%, var(--border));
-  background: repeating-linear-gradient(135deg, var(--surface) 0 12px, color-mix(in srgb, var(--surface-2) 70%, var(--surface)) 12px 24px);
-  color: var(--text-muted); font-size: 14px;
-}
-.ph .icon { width: 36px; height: 36px; color: color-mix(in srgb, var(--accent) 80%, var(--text-muted)); }
-.ph--review { aspect-ratio: auto; min-height: 150px; }
-.placeholders--reviews { grid-template-columns: 1fr; }
-.placeholders--reviews .ph:nth-child(n+2) { display: none; }
-.ph--review { min-height: 120px; }
+/* отзывы: скриншоты переписки, на телефоне столбиком во всю ширину (так крупнее текст), дальше 2 × 2 */
+.reviews { display: grid; gap: 20px; align-items: start; }
+.review { margin: 0; min-width: 0; }
+.review a { display: block; border-radius: var(--r-card); overflow: hidden; background: #0E1621; }
+.review img { width: 100%; height: auto; }
+.review figcaption { padding-top: 10px; font-size: 14px; color: var(--text-muted); }
 .subhead { font-size: clamp(22px, 5vw, 28px); margin: 56px 0 20px; }
 
 /* FAQ */
@@ -637,8 +661,7 @@ html.is-locked { overflow: hidden; }
 @media (min-width: 640px) {
   :root { --gutter: 24px; }
   .type-tile { flex: 1 1 0; }
-  .placeholders--reviews { grid-template-columns: repeat(3, 1fr); }
-  .placeholders--reviews .ph:nth-child(n+2) { display: flex; }
+  .reviews { grid-template-columns: repeat(2, 1fr); gap: 28px 24px; }
   .strip--glass { --strip-card: 26%; }
   .strip--works { --strip-card: 40%; }
   .strip--also { --strip-card: 44%; }

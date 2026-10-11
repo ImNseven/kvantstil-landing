@@ -794,6 +794,7 @@
   /* ---------- демо-переключатель палитр ---------- */
   if (cfg.demoThemes) {
     var THEMES = [
+      { id: 'd', name: 'Графит и латунь, тёмная', swatch: 'linear-gradient(135deg,#16191D 50%,#C9A15C 50%)' },
       { id: 'a', name: 'Графит и латунь', swatch: 'linear-gradient(135deg,#23292F 50%,#C9A15C 50%)' },
       { id: 'b', name: 'Вода', swatch: 'linear-gradient(135deg,#0C3440 50%,#2AA3B8 50%)' },
       { id: 'c', name: 'Зелень', swatch: 'linear-gradient(135deg,#1D3A30 50%,#6E9A7E 50%)' }
