@@ -26,18 +26,19 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap">
   <link rel="preload" as="image" href="img/photo/hero-mobile.webp" media="(max-width: 767px)" fetchpriority="high">
   <link rel="preload" as="image" href="img/photo/hero-desktop.webp" media="(min-width: 768px)" fetchpriority="high">
-  <link rel="stylesheet" href="css/style.css?v=20261011f">
+  <link rel="stylesheet" href="css/style.css?v=20261011g">
 
-  <script src="js/config.js?v=20261011f"></script>
+  <script src="js/config.js?v=20261011g"></script>
   <script>
     // Тема ставится до отрисовки, чтобы не мигали цвета
     (function () {
-      var c = window.SITE_CONFIG || {}, t = c.defaultTheme || 'a';
+      var c = window.SITE_CONFIG || {}, d = c.defaultTheme || 'd', t = d;
+      var list = Array.isArray(c.demoThemes) ? c.demoThemes : ['a', 'b', 'c', 'd'];
       if (c.demoThemes) {
         var q = new URLSearchParams(location.search).get('theme');
         try { t = q || localStorage.getItem('ks-theme') || t; } catch (e) { t = q || t; }
       }
-      if (!/^[abcd]$/.test(t)) t = 'd';
+      if (list.indexOf(t) === -1) t = d;
       document.documentElement.setAttribute('data-theme', t);
     })();
   </script>
@@ -615,6 +616,6 @@
 
 <div class="toast" role="status" aria-live="polite" data-toast></div>
 
-<script src="js/main.js?v=20261011f" defer></script>
+<script src="js/main.js?v=20261011g" defer></script>
 </body>
 </html>

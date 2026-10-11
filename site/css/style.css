@@ -656,6 +656,15 @@ html.is-locked { overflow: hidden; }
 }
 .theme-switch button[aria-pressed="true"] { border-color: #fff; }
 .theme-switch__name { display: none; padding: 0 8px; }
+.theme-switch { border: 1px solid rgb(255 255 255 / .16); }
+/* две палитры: кнопки со словами */
+.theme-switch--words button {
+  width: auto; height: 32px; padding: 0 10px 0 6px; display: inline-flex; align-items: center; gap: 6px;
+  background: transparent; font-weight: 500;
+}
+.theme-switch--words button i { width: 16px; height: 16px; border-radius: 2px; box-shadow: inset 0 0 0 1px rgb(255 255 255 / .3); }
+.theme-switch--words button[aria-pressed="true"] { background: rgb(255 255 255 / .12); border-color: rgb(255 255 255 / .55); }
+@media (max-width: 639px) { .theme-switch--words .theme-switch__label { display: none; } }
 
 /* ---------- планшет ---------- */
 @media (min-width: 640px) {

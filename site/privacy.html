@@ -10,13 +10,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="css/style.css?v=20261011f">
-  <script src="js/config.js?v=20261011f"></script>
+  <link rel="stylesheet" href="css/style.css?v=20261011g">
+  <script src="js/config.js?v=20261011g"></script>
   <script>
     (function () {
-      var c = window.SITE_CONFIG || {}, t = c.defaultTheme || 'a';
+      var c = window.SITE_CONFIG || {}, d = c.defaultTheme || 'd', t = d;
+      var list = Array.isArray(c.demoThemes) ? c.demoThemes : ['a', 'b', 'c', 'd'];
       if (c.demoThemes) { try { t = localStorage.getItem('ks-theme') || t; } catch (e) {} }
-      if (/^[abcd]$/.test(t)) document.documentElement.setAttribute('data-theme', t);
+      if (list.indexOf(t) === -1) t = d;
+      document.documentElement.setAttribute('data-theme', t);
     })();
   </script>
   <style>

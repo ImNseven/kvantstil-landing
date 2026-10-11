@@ -794,27 +794,37 @@
   /* ---------- демо-переключатель палитр ---------- */
   if (cfg.demoThemes) {
     var THEMES = [
-      { id: 'd', name: 'Графит и латунь, тёмная', swatch: 'linear-gradient(135deg,#16191D 50%,#C9A15C 50%)' },
-      { id: 'a', name: 'Графит и латунь', swatch: 'linear-gradient(135deg,#23292F 50%,#C9A15C 50%)' },
+      { id: 'd', name: 'Тёмная', swatch: 'linear-gradient(135deg,#16191D 50%,#C9A15C 50%)' },
+      { id: 'a', name: 'Светлая', swatch: 'linear-gradient(135deg,#F6F4F0 50%,#C9A15C 50%)' },
       { id: 'b', name: 'Вода', swatch: 'linear-gradient(135deg,#0C3440 50%,#2AA3B8 50%)' },
       { id: 'c', name: 'Зелень', swatch: 'linear-gradient(135deg,#1D3A30 50%,#6E9A7E 50%)' }
     ];
+    // в настройках можно оставить только часть палитр: demoThemes: ['d', 'a']
+    if (Array.isArray(cfg.demoThemes)) {
+      THEMES = cfg.demoThemes.map(function (id) { return THEMES.filter(function (t) { return t.id === id; })[0]; }).filter(Boolean);
+    }
+    // когда палитр мало, подписываем кнопки словами, а не буквами
+    var wordy = THEMES.length <= 2;
     var root = document.documentElement;
     var bar = document.createElement('div');
-    bar.className = 'theme-switch';
+    bar.className = 'theme-switch' + (wordy ? ' theme-switch--words' : '');
     bar.setAttribute('role', 'group');
     bar.setAttribute('aria-label', 'Вариант цвета');
     bar.innerHTML = '<span class="theme-switch__label">Цвет</span>' + THEMES.map(function (t) {
-      return '<button type="button" data-theme-id="' + t.id + '" title="' + t.name + '" aria-label="' + t.name +
-        '" style="background:' + t.swatch + '">' + t.id.toUpperCase() + '</button>';
-    }).join('') + '<span class="theme-switch__name"></span>';
+      return wordy
+        ? '<button type="button" data-theme-id="' + t.id + '"><i style="background:' + t.swatch + '"></i>' + t.name + '</button>'
+        : '<button type="button" data-theme-id="' + t.id + '" title="' + t.name + '" aria-label="' + t.name +
+          '" style="background:' + t.swatch + '">' + t.id.toUpperCase() + '</button>';
+    }).join('') + (wordy ? '' : '<span class="theme-switch__name"></span>');
     document.body.appendChild(bar);
     var nameEl = $('.theme-switch__name', bar);
 
     var applyTheme = function (id) {
       root.setAttribute('data-theme', id);
+      var tc = $('meta[name="theme-color"]');
+      if (tc) tc.setAttribute('content', id === 'd' ? '#16191D' : '#FFFFFF');
       $$('button', bar).forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-theme-id') === id)); });
-      nameEl.textContent = THEMES.filter(function (t) { return t.id === id; })[0].name;
+      if (nameEl) nameEl.textContent = THEMES.filter(function (t) { return t.id === id; })[0].name;
       try { localStorage.setItem('ks-theme', id); } catch (e) { /* приватный режим */ }
       var url = new URL(location.href);
       url.searchParams.set('theme', id);
@@ -824,6 +834,6 @@
       var b = e.target.closest('[data-theme-id]');
       if (b) applyTheme(b.getAttribute('data-theme-id'));
     });
-    applyTheme(root.getAttribute('data-theme') || 'a');
+    applyTheme(root.getAttribute('data-theme') || THEMES[0].id);
   }
 })();
