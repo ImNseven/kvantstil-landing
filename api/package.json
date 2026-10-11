@@ -1,0 +1,14 @@
+{
+  "name": "kvantstil-leads",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Приём заявок с лендинга Квант-Стиль и отправка в Telegram",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "chat-id": "node get_chat_id.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

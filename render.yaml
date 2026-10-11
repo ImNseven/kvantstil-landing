@@ -1,0 +1,31 @@
+# Render Blueprint: сайт (статичный, бесплатно, не засыпает) + приём заявок (Node, бесплатно)
+services:
+  - type: web
+    name: kvantstil-site
+    runtime: static
+    buildCommand: echo "static site"
+    staticPublishPath: ./site
+    headers:
+      - path: /img/*
+        name: Cache-Control
+        value: public, max-age=2592000
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+
+  - type: web
+    name: kvantstil-api
+    runtime: node
+    plan: free
+    region: frankfurt
+    rootDir: api
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /health
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
