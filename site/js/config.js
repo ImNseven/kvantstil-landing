@@ -19,18 +19,19 @@ window.SITE_CONFIG = {
   // Текст, который подставляется в чат (WhatsApp) или копируется (Telegram, Viber)
   defaultMessage: 'Здравствуйте! Хочу рассчитать стеклянную душевую.',
 
-  // Куда отправлять заявки из квиза: сервер api/ (Render) пересылает их в Telegram-бот.
-  // На своём компьютере заявки идут в локальный сервер: node api/server.js
+  // Куда отправлять заявки из квиза (дальше они уходят в Telegram-бот).
+  // На хостинге (hoster.by): PHP-обработчик рядом с сайтом, api/lead.php.
+  // Тестовая копия на Render: Node-сервер api/server.js. На своём компьютере: node api/server.js
   // Пусто = заявка никуда не уходит (демо-режим).
-  leadEndpoint: /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
-    ? 'http://localhost:8787/lead'
-    : 'https://kvantstil-api.onrender.com/lead',
+  leadEndpoint: /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8787/lead'
+    : /\.onrender\.com$/.test(location.hostname) ? 'https://kvantstil-api.onrender.com/lead'
+    : '/api/lead.php',
 
   // Google Tag Manager, например 'GTM-XXXXXXX'. Пусто = аналитика не подключена.
   gtmId: '',
 
-  // Переключатель палитр для показа клиенту: false = выключен, true = все палитры,
-  // список = только эти. Сейчас клиент выбирает между тёмной и светлой (11.10). Перед запуском: false.
-  demoThemes: ['d', 'a'],
-  defaultTheme: 'd', // d: графит и латунь, тёмная; a: то же, светлая; b: вода; c: зелень
+  // Переключатель палитр для показа клиенту: false = выключен, true = все палитры, список = только эти.
+  // Клиент выбрал светлую графит и латунь (11.10), переключатель выключен.
+  demoThemes: false,
+  defaultTheme: 'a', // a: графит и латунь, светлая; d: то же, тёмная; b: вода; c: зелень
 };

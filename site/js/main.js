@@ -701,7 +701,8 @@
   // Будим сервер заявок заранее, пока человек читает страницу и проходит подбор
   var warmedUp = false;
   function warmUp() {
-    if (warmedUp || !cfg.leadEndpoint || !window.fetch) return;
+    // будить нужно только Node-сервер на Render (адрес оканчивается на /lead), PHP на хостинге не засыпает
+    if (warmedUp || !/\/lead$/.test(cfg.leadEndpoint || '') || !window.fetch) return;
     warmedUp = true;
     fetch(cfg.leadEndpoint.replace(/\/lead$/, '/health'), { cache: 'no-store' }).catch(function () { warmedUp = false; });
   }

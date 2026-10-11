@@ -9,3 +9,7 @@
 # секреты и мусор
 .env
 node_modules/
+
+# настройки бота для PHP-хостинга
+lead-config.php
+/dist/
