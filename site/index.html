@@ -26,9 +26,9 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap">
   <link rel="preload" as="image" href="img/photo/hero-mobile.webp" media="(max-width: 767px)" fetchpriority="high">
   <link rel="preload" as="image" href="img/photo/hero-desktop.webp" media="(min-width: 768px)" fetchpriority="high">
-  <link rel="stylesheet" href="css/style.css?v=20261011c">
+  <link rel="stylesheet" href="css/style.css?v=20261011d">
 
-  <script src="js/config.js?v=20261011c"></script>
+  <script src="js/config.js?v=20261011d"></script>
   <script>
     // Тема ставится до отрисовки, чтобы не мигали цвета
     (function () {
@@ -157,8 +157,8 @@
           </ul>
         </div>
         <figure class="about__media">
-          <img src="img/photo/about.webp" width="900" height="1125" loading="lazy"
-               alt="Угловая душевая из прозрачного стекла в ванной комнате">
+          <img src="img/photo/about.webp" width="680" height="850" loading="lazy"
+               alt="Душевая с раздвижной дверью из прозрачного стекла">
         </figure>
       </div>
 
@@ -255,19 +255,41 @@
         </figure>
       </div>
       <h3 class="spec__title"><svg class="icon"><use href="#i-sparkles"/></svg>Цвета фурнитуры</h3>
-      <ul class="spec spec--hardware">
-        <li><b>Полированный хром</b><span>полированная нержавейка</span></li>
-        <li><b>Сатин</b><span>шлифованная нержавейка</span></li>
-        <li><b>Чёрный матовый</b></li>
-        <li><b>Оружейная сталь</b></li>
-        <li><b>Глянцевое золото</b></li>
-        <li><b>Брашированное золото</b></li>
-        <li><b>Латунь</b></li>
-        <li class="spec__cta">
-          <b>Не можете выбрать?</b><span>Покажем варианты на&nbsp;3D‑проекте</span>
+      <div class="strip strip--glass strip--hardware">
+        <figure class="glass-card">
+          <img src="img/photo/hw-chrome.webp" width="560" height="560" loading="lazy" alt="Фурнитура: Полированный хром">
+          <figcaption><b>Полированный хром</b><span>полированная нержавейка</span></figcaption>
+        </figure>
+        <figure class="glass-card">
+          <img src="img/photo/hw-satin.webp" width="560" height="560" loading="lazy" alt="Фурнитура: Сатин">
+          <figcaption><b>Сатин</b><span>шлифованная нержавейка</span></figcaption>
+        </figure>
+        <figure class="glass-card">
+          <img src="img/photo/hw-black.webp" width="560" height="560" loading="lazy" alt="Фурнитура: Чёрный матовый">
+          <figcaption><b>Чёрный матовый</b></figcaption>
+        </figure>
+        <figure class="glass-card">
+          <img src="img/photo/hw-gunmetal.webp" width="560" height="560" loading="lazy" alt="Фурнитура: Оружейная сталь">
+          <figcaption><b>Оружейная сталь</b></figcaption>
+        </figure>
+        <figure class="glass-card">
+          <img src="img/photo/hw-gold.webp" width="560" height="560" loading="lazy" alt="Фурнитура: Глянцевое золото">
+          <figcaption><b>Глянцевое золото</b></figcaption>
+        </figure>
+        <figure class="glass-card">
+          <img src="img/photo/hw-white.webp" width="560" height="560" loading="lazy" alt="Фурнитура: Белый">
+          <figcaption><b>Белый</b></figcaption>
+        </figure>
+        <figure class="glass-card">
+          <img src="img/photo/hw-bronze.webp" width="560" height="560" loading="lazy" alt="Фурнитура: Бронза">
+          <figcaption><b>Бронза</b></figcaption>
+        </figure>
+        <div class="hw-cta">
+          <b>Не можете выбрать?</b>
+          <span>Покажем варианты на&nbsp;3D‑проекте</span>
           <button class="link-btn" type="button" data-quiz-open>Подобрать<svg class="icon"><use href="#i-arrow-right"/></svg></button>
-        </li>
-      </ul>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -572,6 +594,6 @@
 
 <div class="toast" role="status" aria-live="polite" data-toast></div>
 
-<script src="js/main.js?v=20261011c" defer></script>
+<script src="js/main.js?v=20261011d" defer></script>
 </body>
 </html>
