@@ -24,6 +24,42 @@ function respond(int $code, array $data): void
     exit;
 }
 
+// Если PHP упадёт, пишем причину в api/lead-error.log (из браузера он закрыт) и отвечаем понятным JSON
+register_shutdown_function(static function (): void {
+    $e = error_get_last();
+    if ($e && in_array($e['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
+        @file_put_contents(
+            __DIR__ . '/lead-error.log',
+            date('c') . ' ' . $e['message'] . ' (' . basename($e['file']) . ':' . $e['line'] . ")\n",
+            FILE_APPEND | LOCK_EX
+        );
+        if (!headers_sent()) {
+            http_response_code(500);
+            header('Content-Type: application/json; charset=utf-8');
+        }
+        echo json_encode(['ok' => false, 'error' => 'server']);
+    }
+});
+
+// Работа с текстом в UTF-8: mbstring есть не на каждом хостинге, поэтому с запасным вариантом
+function u_len(string $s): int
+{
+    return function_exists('mb_strlen') ? mb_strlen($s, 'UTF-8') : (int)preg_match_all('/./us', $s);
+}
+
+function u_cut(string $s, int $max): string
+{
+    if (function_exists('mb_substr')) {
+        return mb_substr($s, 0, $max, 'UTF-8');
+    }
+    return preg_match('/^.{0,' . $max . '}/us', $s, $m) ? $m[0] : '';
+}
+
+function u_lower(string $s): string
+{
+    return function_exists('mb_strtolower') ? mb_strtolower($s, 'UTF-8') : $s;
+}
+
 $configFile = __DIR__ . '/lead-config.php';
 $config = is_file($configFile) ? require $configFile : [];
 if (!is_array($config)) {
@@ -52,7 +88,15 @@ if ($method === 'OPTIONS') {
     exit;
 }
 if ($method === 'GET') {
-    respond(200, ['ok' => true, 'configured' => $token !== '' && $chatId !== '']);
+    respond(200, [
+        'ok' => true,
+        'configured' => $token !== '' && $chatId !== '',
+        // что умеет сервер: нужен curl или allow_url_fopen, чтобы достучаться до Telegram
+        'php' => PHP_VERSION,
+        'curl' => function_exists('curl_init'),
+        'url_fopen' => (bool)ini_get('allow_url_fopen'),
+        'mbstring' => function_exists('mb_substr'),
+    ]);
 }
 if ($method !== 'POST') {
     respond(405, ['ok' => false, 'error' => 'method']);
@@ -99,32 +143,32 @@ if (!empty($body['website'])) {
 }
 
 /* ---------- проверка заявки ---------- */
-function str($v, int $max): string
+function clean($v, int $max): string
 {
     if (!is_string($v)) {
         return '';
     }
     $v = trim((string)preg_replace('/[\x00-\x1F\x7F]/u', ' ', $v));
-    return mb_substr($v, 0, $max, 'UTF-8');
+    return u_cut($v, $max);
 }
 
 $l = is_array($body['lead'] ?? null) ? $body['lead'] : [];
 $lead = [
-    'type' => str($l['type'] ?? null, 60),
-    'door' => str($l['door'] ?? null, 40),
-    'sizes' => str($l['sizes'] ?? null, 120),
-    'glass' => str($l['glass'] ?? null, 80),
-    'hardware' => str($l['hardware'] ?? null, 80),
-    'timing' => str($l['timing'] ?? null, 60),
-    'name' => str($l['name'] ?? null, 40),
-    'contact' => str($l['contact'] ?? null, 40),
-    'channel' => str($l['channel'] ?? null, 20),
-    'page' => str($l['page'] ?? null, 500),
+    'type' => clean($l['type'] ?? null, 60),
+    'door' => clean($l['door'] ?? null, 40),
+    'sizes' => clean($l['sizes'] ?? null, 120),
+    'glass' => clean($l['glass'] ?? null, 80),
+    'hardware' => clean($l['hardware'] ?? null, 80),
+    'timing' => clean($l['timing'] ?? null, 60),
+    'name' => clean($l['name'] ?? null, 40),
+    'contact' => clean($l['contact'] ?? null, 40),
+    'channel' => clean($l['channel'] ?? null, 20),
+    'page' => clean($l['page'] ?? null, 500),
 ];
-if (mb_strlen($lead['name'], 'UTF-8') < 2) {
+if (u_len($lead['name']) < 2) {
     respond(400, ['ok' => false, 'error' => 'name']);
 }
-if (mb_strlen($lead['contact'], 'UTF-8') < 5) {
+if (u_len($lead['contact']) < 5) {
     respond(400, ['ok' => false, 'error' => 'contact']);
 }
 if (!in_array($lead['channel'], CHANNELS, true)) {
@@ -194,7 +238,7 @@ if ($link !== '') {
 array_push(
     $lines,
     '',
-    'Тип: ' . h($lead['type']) . ', дверь: ' . h(mb_strtolower($lead['door'], 'UTF-8')),
+    'Тип: ' . h($lead['type']) . ', дверь: ' . h(u_lower($lead['door'])),
     'Размеры: ' . h($lead['sizes']),
     'Стекло: ' . h($lead['glass']),
     'Фурнитура: ' . h($lead['hardware']),
