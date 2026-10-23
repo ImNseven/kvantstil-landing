@@ -51,6 +51,12 @@
     if (v) el.textContent = v;
   });
 
+  // Цена «от» из настроек: 1100 -> «1 100» с неразрывным пробелом
+  if (cfg.priceFrom) {
+    var priceText = String(cfg.priceFrom).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
+    $$('[data-price]').forEach(function (el) { el.textContent = priceText; });
+  }
+
   function messengerHref(kind, msg) {
     switch (kind) {
       case 'whatsapp': return 'https://wa.me/' + cfg.whatsappPhone + '?text=' + encodeURIComponent(msg);

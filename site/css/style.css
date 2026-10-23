@@ -276,6 +276,10 @@ html.is-locked { overflow: hidden; }
 .hero__bullets .icon { width: 20px; height: 20px; color: var(--ink-accent); }
 .hero__actions { margin-top: 26px; display: grid; gap: 14px; }
 .hero__actions .btn { width: 100%; }
+/* цена на первом экране: рядом с кнопкой, белым по тёмному */
+.hero__price { display: flex; flex-direction: column; gap: 2px; color: #fff; line-height: 1.25; }
+.hero__price b { font-family: var(--font-head); font-size: 22px; font-weight: 600; }
+.hero__price > span { font-size: 14px; color: rgb(255 255 255 / .75); }
 /* ---------- секции ---------- */
 .section { padding: 64px 0; }
 .section--tight { padding: 48px 0; }
@@ -323,6 +327,25 @@ html.is-locked { overflow: hidden; }
 .type-tile:active { background: var(--accent-soft); }
 .type-tile__icon { width: 44px; height: 44px; color: var(--text); }
 .type-tile__desc, .type-tile__more, .types__note { display: none; }
+/* что входит в стоимость */
+.price-note {
+  display: grid; gap: 16px; margin-top: 24px; padding: 20px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-card);
+}
+.price-note__from { font-size: 14px; color: var(--text-muted); line-height: 1.4; }
+.price-note__from b {
+  display: block; margin: 2px 0 4px; font-family: var(--font-head); font-size: 30px; font-weight: 600;
+  line-height: 1.15; color: var(--text);
+}
+.price-note__list { display: grid; gap: 10px; }
+.price-note__list li { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; line-height: 1.45; }
+.price-note__list .icon { width: 20px; height: 20px; margin-top: 1px; }
+.price-note__list .is-in .icon { color: var(--accent-strong); }
+.price-note__list .is-out .icon { color: var(--text-muted); }
+@media (min-width: 768px) {
+  .price-note { grid-template-columns: minmax(220px, auto) 1fr; column-gap: 32px; align-items: center; padding: 24px 28px; }
+  .price-note__from { padding-right: 32px; border-right: 1px solid var(--border); }
+}
 .types__hint { margin-top: 14px; font-size: 14px; color: var(--text-muted); text-align: center; }
 
 /* знакомство */
