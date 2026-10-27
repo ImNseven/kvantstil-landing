@@ -53,7 +53,10 @@ function str(v, max) {
 
 function cleanLead(raw) {
   const l = raw && typeof raw === 'object' ? raw : {};
+  // короткая форма «имя + телефон» без подбора: параметров душевой в ней нет
+  const short = l.form === 'short';
   const lead = {
+    short,
     type: str(l.type, 60),
     door: str(l.door, 40),
     sizes: str(l.sizes, 120),
@@ -68,7 +71,7 @@ function cleanLead(raw) {
   if (lead.name.length < 2) return { error: 'name' };
   if (lead.contact.length < 5) return { error: 'contact' };
   if (CHANNELS.indexOf(lead.channel) === -1) return { error: 'channel' };
-  if (!lead.type || !lead.door || !lead.sizes || !lead.glass || !lead.hardware || !lead.timing) return { error: 'fields' };
+  if (!short && (!lead.type || !lead.door || !lead.sizes || !lead.glass || !lead.hardware || !lead.timing)) return { error: 'fields' };
   return { lead };
 }
 
@@ -102,20 +105,24 @@ function formatMessage(lead) {
   const link = replyLink(lead);
   const src = source(lead.page);
   const lines = [
-    '<b>Заявка с сайта</b> · ' + h(time),
+    '<b>' + (lead.short ? 'Короткая заявка с сайта' : 'Заявка с сайта') + '</b> · ' + h(time),
     '',
     '<b>' + h(lead.name) + '</b>',
     h(lead.contact) + ' · ответить: ' + h(lead.channel === 'Звонок' ? 'звонком' : lead.channel)
   ];
   if (link) lines.push('<a href="' + h(link) + '">Написать в ' + h(lead.channel) + '</a>');
-  lines.push(
-    '',
-    'Тип: ' + h(lead.type) + ', дверь: ' + h(lead.door.toLowerCase()),
-    'Размеры: ' + h(lead.sizes),
-    'Стекло: ' + h(lead.glass),
-    'Фурнитура: ' + h(lead.hardware),
-    'Сроки: ' + h(lead.timing)
-  );
+  if (lead.short) {
+    lines.push('', 'Без подбора: имя и телефон, параметры душевой уточнить');
+  } else {
+    lines.push(
+      '',
+      'Тип: ' + h(lead.type) + ', дверь: ' + h(lead.door.toLowerCase()),
+      'Размеры: ' + h(lead.sizes),
+      'Стекло: ' + h(lead.glass),
+      'Фурнитура: ' + h(lead.hardware),
+      'Сроки: ' + h(lead.timing)
+    );
+  }
   if (src) lines.push('', 'Источник: ' + h(src));
   return lines.join('\n');
 }

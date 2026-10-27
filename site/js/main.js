@@ -19,13 +19,6 @@
     for (var k in params || {}) data[k] = params[k];
     window.dataLayer.push(data);
   }
-  if (cfg.gtmId) {
-    window.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
-    var gtm = document.createElement('script');
-    gtm.async = true;
-    gtm.src = 'https://www.googletagmanager.com/gtm.js?id=' + encodeURIComponent(cfg.gtmId);
-    document.head.appendChild(gtm);
-  }
 
   /* ---------- всплывающее сообщение ---------- */
   var toastEl = $('[data-toast]');
@@ -51,11 +44,15 @@
     if (v) el.textContent = v;
   });
 
-  // Цена «от» из настроек: 1100 -> «1 100» с неразрывным пробелом
+  // Цены из настроек: 1000 -> «1 000» с неразрывным пробелом
+  function fmtPrice(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0'); }
   if (cfg.priceFrom) {
-    var priceText = String(cfg.priceFrom).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
-    $$('[data-price]').forEach(function (el) { el.textContent = priceText; });
+    $$('[data-price]').forEach(function (el) { el.textContent = fmtPrice(cfg.priceFrom); });
   }
+  $$('[data-price-type]').forEach(function (el) {
+    var v = (cfg.typePrices || {})[el.getAttribute('data-price-type')];
+    if (v) el.textContent = fmtPrice(v);
+  });
 
   function messengerHref(kind, msg) {
     switch (kind) {
@@ -429,7 +426,7 @@
         '<p class="quiz__sub">Петли, ручки, профили и крепления</p>' + optionList(HARDWARE, 'hardware') + nextButton('Далее');
     } else if (step === 4) {
       html = '<h2 class="quiz__title" id="quiz-title">Когда нужна душевая?</h2>' +
-        '<p class="quiz__sub">Изготовление с установкой обычно около двух недель</p>' +
+        '<p class="quiz__sub">Изготовление занимает 10 дней</p>' +
         optionList(TIMING.map(function (t) { return [t, '']; }), 'timing') + nextButton('Далее');
     } else if (step === 5) {
       html = '<h2 class="quiz__title" id="quiz-title">Куда прислать расчёт?</h2>' +
@@ -689,14 +686,23 @@
       console.info('[демо] заявка не отправлена, нет leadEndpoint:\n' + formatLead(lead));
       return Promise.resolve();
     }
+    var hp = $('[name="website"]', form);
+    return postLead({ lead: lead, website: hp ? hp.value : '' });
+  }
+
+  // Отправка заявки на сервер (квиз и короткая форма)
+  function postLead(body) {
+    if (!cfg.leadEndpoint) {
+      console.info('[демо] заявка не отправлена, нет leadEndpoint', body);
+      return Promise.resolve();
+    }
     // бесплатный сервер на Render после простоя просыпается до минуты
     var ctrl = window.AbortController ? new AbortController() : null;
     var timer = ctrl && setTimeout(function () { ctrl.abort(); }, 75000);
-    var hp = $('[name="website"]', form);
     return fetch(cfg.leadEndpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lead: lead, website: hp ? hp.value : '' }),
+      body: JSON.stringify(body),
       signal: ctrl ? ctrl.signal : undefined
     }).then(function (r) {
       clearTimeout(timer);
@@ -796,6 +802,119 @@
   if (quizParam !== null) {
     var known = TYPES.some(function (t) { return t.id === quizParam; });
     openQuiz(known ? quizParam : '');
+  }
+
+  /* ---------- короткая заявка без подбора ---------- */
+  var cbForm = $('[data-callback]');
+  if (cbForm) {
+    var cbChannel = 'Звонок';
+    var cbSending = false;
+    var cbPhone = $('[name="phone"]', cbForm);
+    var cbName = $('[name="name"]', cbForm);
+    var cbConsent = $('[name="consent"]', cbForm);
+    var cbErr = function (name, msg) {
+      var el = $('[data-cb-error="' + name + '"]', cbForm);
+      if (el) { el.textContent = msg || ''; el.hidden = !msg; }
+    };
+
+    cbForm.addEventListener('click', function (e) {
+      var chip = e.target.closest('[data-cb-channel]');
+      if (!chip) return;
+      cbChannel = chip.getAttribute('data-cb-channel');
+      $$('[data-cb-channel]', cbForm).forEach(function (b) {
+        var on = b === chip;
+        b.classList.toggle('is-active', on);
+        b.setAttribute('aria-pressed', String(on));
+      });
+    });
+    cbForm.addEventListener('input', function (e) {
+      if (e.target.classList.contains('is-invalid')) markInvalid(e.target, false);
+      if (e.target === cbConsent && cbConsent.checked) cbErr('consent', '');
+    });
+    // после ухода с поля: красиво форматируем белорусский номер
+    cbPhone.addEventListener('blur', function () {
+      var p = parsePhone(cbPhone.value);
+      if (p) { cbPhone.value = formatPhone(p); cbErr('phone', ''); markInvalid(cbPhone, false); }
+    });
+
+    cbForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (cbSending) return;
+      var name = cbName.value.replace(/\s+/g, ' ').trim();
+      var phone = parsePhone(cbPhone.value);
+      var first = null;
+      cbErr('name', ''); cbErr('phone', ''); cbErr('consent', '');
+      if (!NAME_RE.test(name)) {
+        cbErr('name', name ? 'Имя: только буквы, от 2 символов' : 'Напишите, как к вам обращаться');
+        markInvalid(cbName, true);
+        first = first || cbName;
+      }
+      if (!phone) {
+        cbErr('phone', cbPhone.value.trim() ? 'Проверьте номер, например +375 29 123-45-67' : 'Укажите номер телефона');
+        markInvalid(cbPhone, true);
+        first = first || cbPhone;
+      }
+      if (!cbConsent.checked) {
+        cbErr('consent', 'Без согласия мы не можем принять заявку');
+        first = first || cbConsent;
+      }
+      if (first) { first.focus(); track('form_error', {}); return; }
+
+      var lead = { form: 'short', name: name, contact: formatPhone(phone), channel: cbChannel, page: location.href, createdAt: new Date().toISOString() };
+      var hp = $('[name="website"]', cbForm);
+      var btn = $('button[type="submit"]', cbForm);
+      var fb = $('[data-cb-fallback]', cbForm);
+      cbSending = true;
+      btn.disabled = true;
+      btn.firstChild.textContent = 'Отправляем…';
+      postLead({ lead: lead, website: hp ? hp.value : '' }).then(function () {
+        cbSending = false;
+        track('form_submit', { channel: cbChannel });
+        var done = $('[data-cb-done]');
+        $('[data-cb-done-text]', done).textContent = cbChannel === 'Звонок'
+          ? 'Перезвоним вам и рассчитаем стоимость.'
+          : 'Напишем вам в ' + cbChannel + ' и рассчитаем стоимость.';
+        cbForm.hidden = true;
+        done.hidden = false;
+      }, function () {
+        cbSending = false;
+        btn.disabled = false;
+        btn.firstChild.textContent = 'Отправить ещё раз';
+        track('form_send_error', {});
+        var text = 'Здравствуйте! Заявка с сайта: ' + name + ', ' + formatPhone(phone) + ', связаться: ' + cbChannel.toLowerCase();
+        fb.innerHTML = '<p>Не получилось отправить заявку. Отправьте её нам в WhatsApp, текст уже готов.</p>' +
+          '<a class="btn btn--ghost" target="_blank" rel="noopener" href="' + esc(messengerHref('whatsapp', text)) + '">' +
+          '<svg class="icon"><use href="#i-whatsapp"/></svg>Отправить в WhatsApp</a>';
+        fb.hidden = false;
+      });
+    });
+  }
+
+  /* ---------- согласие на cookie (аналитика и реклама Google) ---------- */
+  // Пока человек не нажал «Принять», теги Google работают без cookie (Consent Mode, настройка в <head>)
+  var cookieBar = $('[data-cookie]');
+  if (cookieBar) {
+    var showCookieBar = function (show) {
+      cookieBar.hidden = !show;
+      document.documentElement.classList.toggle('has-cookie-bar', show);
+    };
+    var setConsent = function (choice) {
+      try { localStorage.setItem('ks-cookie', choice); } catch (e) { /* приватный режим */ }
+      var v = choice === 'granted' ? 'granted' : 'denied';
+      if (typeof window.gtag === 'function') {
+        window.gtag('consent', 'update', { ad_storage: v, ad_user_data: v, ad_personalization: v, analytics_storage: v });
+      }
+      track('cookie_consent', { choice: choice });
+      showCookieBar(false);
+    };
+    var savedConsent = null;
+    try { savedConsent = localStorage.getItem('ks-cookie'); } catch (e) { /* приватный режим */ }
+    if (!savedConsent) showCookieBar(true);
+    $('[data-cookie-accept]', cookieBar).addEventListener('click', function () { setConsent('granted'); });
+    $('[data-cookie-decline]', cookieBar).addEventListener('click', function () { setConsent('denied'); });
+    $$('[data-cookie-settings]').forEach(function (b) {
+      b.addEventListener('click', function () { showCookieBar(true); });
+    });
   }
 
   /* ---------- демо-переключатель палитр ---------- */

@@ -276,10 +276,21 @@ html.is-locked { overflow: hidden; }
 .hero__bullets .icon { width: 20px; height: 20px; color: var(--ink-accent); }
 .hero__actions { margin-top: 26px; display: grid; gap: 14px; }
 .hero__actions .btn { width: 100%; }
-/* цена на первом экране: рядом с кнопкой, белым по тёмному */
-.hero__price { display: flex; flex-direction: column; gap: 2px; color: #fff; line-height: 1.25; }
-.hero__price b { font-family: var(--font-head); font-size: 22px; font-weight: 600; }
-.hero__price > span { font-size: 14px; color: rgb(255 255 255 / .75); }
+/* цифры на первом экране: цена, срок, гарантия */
+.hero__facts { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; margin-top: 20px; }
+.hero__facts li { display: flex; flex-direction: column; gap: 2px; padding: 0 16px; border-left: 1px solid rgb(255 255 255 / .22); }
+.hero__facts li:first-child { padding-left: 0; border-left: 0; }
+.hero__facts b { font-family: var(--font-head); font-size: 20px; font-weight: 600; line-height: 1.2; color: #fff; white-space: nowrap; }
+.hero__facts li > span { font-size: 13px; line-height: 1.3; color: rgb(255 255 255 / .72); }
+/* телефон под кнопкой */
+.hero__phone { display: inline-flex; flex-direction: column; gap: 1px; color: #fff; text-decoration: none; line-height: 1.25; justify-self: start; }
+.hero__phone span { font-size: 13px; color: rgb(255 255 255 / .72); }
+.hero__phone b { font-family: var(--font-head); font-size: 20px; font-weight: 600; }
+.hero__phone:hover b { color: var(--ink-accent); }
+@media (max-width: 379px) {
+  .hero__facts li { padding: 0 10px; }
+  .hero__facts b { font-size: 18px; }
+}
 /* ---------- секции ---------- */
 .section { padding: 64px 0; }
 .section--tight { padding: 48px 0; }
@@ -327,6 +338,7 @@ html.is-locked { overflow: hidden; }
 .type-tile:active { background: var(--accent-soft); }
 .type-tile__icon { width: 44px; height: 44px; color: var(--text); }
 .type-tile__desc, .type-tile__more, .types__note { display: none; }
+.type-tile__price { font-size: 13px; font-weight: 500; color: var(--accent-strong); white-space: nowrap; }
 /* что входит в стоимость */
 .price-note {
   display: grid; gap: 16px; margin-top: 24px; padding: 20px;
@@ -337,7 +349,9 @@ html.is-locked { overflow: hidden; }
   display: block; margin: 2px 0 4px; font-family: var(--font-head); font-size: 30px; font-weight: 600;
   line-height: 1.15; color: var(--text);
 }
-.price-note__list { display: grid; gap: 10px; }
+.price-note__cols { display: grid; gap: 18px; }
+.price-note__title { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+.price-note__list { display: grid; gap: 8px; }
 .price-note__list li { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; line-height: 1.45; }
 .price-note__list .icon { width: 20px; height: 20px; margin-top: 1px; }
 .price-note__list .is-in .icon { color: var(--accent-strong); }
@@ -345,6 +359,7 @@ html.is-locked { overflow: hidden; }
 @media (min-width: 768px) {
   .price-note { grid-template-columns: minmax(220px, auto) 1fr; column-gap: 32px; align-items: center; padding: 24px 28px; }
   .price-note__from { padding-right: 32px; border-right: 1px solid var(--border); }
+  .price-note__cols { grid-template-columns: 1fr 1fr; column-gap: 32px; }
 }
 .types__hint { margin-top: 14px; font-size: 14px; color: var(--text-muted); text-align: center; }
 
@@ -528,6 +543,39 @@ html.is-locked { overflow: hidden; }
 .footer a:hover { text-decoration: underline; }
 .footer__legal { font-size: 13px; display: grid; gap: 8px; padding-top: 20px; border-top: 1px solid var(--ink-2); }
 .footer__legal a { text-decoration: underline; }
+.footer__link { padding: 0; border: 0; background: none; color: var(--on-ink); font: inherit; text-decoration: underline; cursor: pointer; }
+
+/* короткая заявка без подбора */
+.callback__inner { display: grid; gap: 24px; }
+.callback__text .section__lead { margin-top: 10px; }
+.callback__phone {
+  display: inline-flex; align-items: center; gap: 10px; margin-top: 18px; color: var(--text); text-decoration: none;
+  font-family: var(--font-head); font-size: 22px; font-weight: 600;
+}
+.callback__phone .icon { width: 22px; height: 22px; color: var(--accent-strong); }
+.callback__phone:hover { color: var(--accent-strong); }
+.callback__note { margin-top: 4px; font-size: 14px; color: var(--text-muted); }
+.callback__box { padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-card); }
+.callback__label { font-size: 14px; font-weight: 500; margin: 16px 0 8px; }
+.callback__form .btn { width: 100%; margin-top: 18px; }
+.callback__done { text-align: center; padding: 12px 0; }
+.callback__done h3 { font-size: 20px; margin-bottom: 6px; }
+.callback__done p { color: var(--text-muted); }
+
+/* окно согласия на cookie */
+.cookie {
+  position: fixed; z-index: 80; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom));
+  display: grid; gap: 10px; max-width: 520px; padding: 12px 14px;
+  background: #1C2024; color: #F4F0E8; border: 1px solid rgb(255 255 255 / .14); border-radius: var(--r-card);
+  box-shadow: 0 12px 32px -12px rgb(0 0 0 / .5); font-size: 13px; line-height: 1.4;
+}
+.cookie[hidden] { display: none; }
+.cookie a { color: #D7B271; }
+.cookie__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cookie .btn { width: 100%; min-height: 40px; padding: 8px 14px; font-size: 15px; }
+.cookie .btn--ghost { background: transparent; color: #fff; border-color: rgb(255 255 255 / .45); }
+.cookie .btn--ghost:hover { border-color: #fff; }
+html.has-cookie-bar .fab { display: none; }
 
 /* ---------- плавающая кнопка ---------- */
 .fab {
@@ -787,4 +835,11 @@ html.is-locked { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* короткая заявка и cookie на широких экранах */
+@media (min-width: 768px) {
+  .callback__inner { grid-template-columns: 1fr minmax(0, 460px); gap: 48px; align-items: center; }
+  .callback__box { padding: 28px; }
+  .cookie { left: 24px; right: auto; bottom: 24px; padding: 16px; gap: 12px; font-size: 14px; }
 }

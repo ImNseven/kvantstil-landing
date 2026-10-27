@@ -153,6 +153,8 @@ function clean($v, int $max): string
 }
 
 $l = is_array($body['lead'] ?? null) ? $body['lead'] : [];
+// короткая форма «имя + телефон» без подбора: параметров душевой в ней нет
+$short = ($l['form'] ?? null) === 'short';
 $lead = [
     'type' => clean($l['type'] ?? null, 60),
     'door' => clean($l['door'] ?? null, 40),
@@ -175,7 +177,7 @@ if (!in_array($lead['channel'], CHANNELS, true)) {
     respond(400, ['ok' => false, 'error' => 'channel']);
 }
 foreach (['type', 'door', 'sizes', 'glass', 'hardware', 'timing'] as $key) {
-    if ($lead[$key] === '') {
+    if (!$short && $lead[$key] === '') {
         respond(400, ['ok' => false, 'error' => 'fields']);
     }
 }
@@ -227,7 +229,7 @@ $time = (new DateTime('now', new DateTimeZone('Europe/Minsk')))->format('d.m, H:
 $link = replyLink($lead);
 $src = source($lead['page']);
 $lines = [
-    '<b>Заявка с сайта</b> · ' . $time,
+    '<b>' . ($short ? 'Короткая заявка с сайта' : 'Заявка с сайта') . '</b> · ' . $time,
     '',
     '<b>' . h($lead['name']) . '</b>',
     h($lead['contact']) . ' · ответить: ' . h($lead['channel'] === 'Звонок' ? 'звонком' : $lead['channel']),
@@ -235,15 +237,19 @@ $lines = [
 if ($link !== '') {
     $lines[] = '<a href="' . h($link) . '">Написать в ' . h($lead['channel']) . '</a>';
 }
-array_push(
-    $lines,
-    '',
-    'Тип: ' . h($lead['type']) . ', дверь: ' . h(u_lower($lead['door'])),
-    'Размеры: ' . h($lead['sizes']),
-    'Стекло: ' . h($lead['glass']),
-    'Фурнитура: ' . h($lead['hardware']),
-    'Сроки: ' . h($lead['timing'])
-);
+if ($short) {
+    array_push($lines, '', 'Без подбора: имя и телефон, параметры душевой уточнить');
+} else {
+    array_push(
+        $lines,
+        '',
+        'Тип: ' . h($lead['type']) . ', дверь: ' . h(u_lower($lead['door'])),
+        'Размеры: ' . h($lead['sizes']),
+        'Стекло: ' . h($lead['glass']),
+        'Фурнитура: ' . h($lead['hardware']),
+        'Сроки: ' . h($lead['timing'])
+    );
+}
 if ($src !== '') {
     array_push($lines, '', 'Источник: ' . h($src));
 }
