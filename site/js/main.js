@@ -890,30 +890,20 @@
     });
   }
 
-  /* ---------- согласие на cookie (аналитика и реклама Google) ---------- */
-  // Пока человек не нажал «Принять», теги Google работают без cookie (Consent Mode, настройка в <head>)
+  /* ---------- уведомление о cookie ---------- */
+  // Только сообщает, что сайт использует cookie: теги Google работают сразу (настройка в <head>)
   var cookieBar = $('[data-cookie]');
   if (cookieBar) {
     var showCookieBar = function (show) {
       cookieBar.hidden = !show;
       document.documentElement.classList.toggle('has-cookie-bar', show);
     };
-    var setConsent = function (choice) {
-      try { localStorage.setItem('ks-cookie', choice); } catch (e) { /* приватный режим */ }
-      var v = choice === 'granted' ? 'granted' : 'denied';
-      if (typeof window.gtag === 'function') {
-        window.gtag('consent', 'update', { ad_storage: v, ad_user_data: v, ad_personalization: v, analytics_storage: v });
-      }
-      track('cookie_consent', { choice: choice });
+    var cookieSeen = null;
+    try { cookieSeen = localStorage.getItem('ks-cookie'); } catch (e) { /* приватный режим */ }
+    if (!cookieSeen) showCookieBar(true);
+    $('[data-cookie-ok]', cookieBar).addEventListener('click', function () {
+      try { localStorage.setItem('ks-cookie', 'seen'); } catch (e) { /* приватный режим */ }
       showCookieBar(false);
-    };
-    var savedConsent = null;
-    try { savedConsent = localStorage.getItem('ks-cookie'); } catch (e) { /* приватный режим */ }
-    if (!savedConsent) showCookieBar(true);
-    $('[data-cookie-accept]', cookieBar).addEventListener('click', function () { setConsent('granted'); });
-    $('[data-cookie-decline]', cookieBar).addEventListener('click', function () { setConsent('denied'); });
-    $$('[data-cookie-settings]').forEach(function (b) {
-      b.addEventListener('click', function () { showCookieBar(true); });
     });
   }
 

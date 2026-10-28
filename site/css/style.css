@@ -543,7 +543,6 @@ html.is-locked { overflow: hidden; }
 .footer a:hover { text-decoration: underline; }
 .footer__legal { font-size: 13px; display: grid; gap: 8px; padding-top: 20px; border-top: 1px solid var(--ink-2); }
 .footer__legal a { text-decoration: underline; }
-.footer__link { padding: 0; border: 0; background: none; color: var(--on-ink); font: inherit; text-decoration: underline; cursor: pointer; }
 
 /* короткая заявка без подбора */
 .callback__inner { display: grid; gap: 24px; }
@@ -562,19 +561,16 @@ html.is-locked { overflow: hidden; }
 .callback__done h3 { font-size: 20px; margin-bottom: 6px; }
 .callback__done p { color: var(--text-muted); }
 
-/* окно согласия на cookie */
+/* уведомление о cookie */
 .cookie {
   position: fixed; z-index: 80; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom));
-  display: grid; gap: 10px; max-width: 520px; padding: 12px 14px;
+  display: flex; align-items: center; gap: 12px; max-width: 520px; padding: 12px 14px;
   background: #1C2024; color: #F4F0E8; border: 1px solid rgb(255 255 255 / .14); border-radius: var(--r-card);
   box-shadow: 0 12px 32px -12px rgb(0 0 0 / .5); font-size: 13px; line-height: 1.4;
 }
 .cookie[hidden] { display: none; }
 .cookie a { color: #D7B271; }
-.cookie__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.cookie .btn { width: 100%; min-height: 40px; padding: 8px 14px; font-size: 15px; }
-.cookie .btn--ghost { background: transparent; color: #fff; border-color: rgb(255 255 255 / .45); }
-.cookie .btn--ghost:hover { border-color: #fff; }
+.cookie .btn { flex: none; min-height: 40px; padding: 8px 18px; font-size: 15px; }
 html.has-cookie-bar .fab { display: none; }
 
 /* ---------- плавающая кнопка ---------- */
@@ -841,5 +837,5 @@ html.has-cookie-bar .fab { display: none; }
 @media (min-width: 768px) {
   .callback__inner { grid-template-columns: 1fr minmax(0, 460px); gap: 48px; align-items: center; }
   .callback__box { padding: 28px; }
-  .cookie { left: 24px; right: auto; bottom: 24px; padding: 16px; gap: 12px; font-size: 14px; }
+  .cookie { left: 24px; right: auto; bottom: 24px; padding: 14px 16px; gap: 16px; font-size: 14px; }
 }

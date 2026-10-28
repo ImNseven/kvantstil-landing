@@ -2,12 +2,12 @@
 <html lang="ru" data-theme="a">
 <head>
   <meta charset="utf-8">
-  <!-- Согласие на cookie (Google Consent Mode): пока человек не нажал «Принять», аналитика и реклама без cookie -->
+  <!-- Cookie (Google Consent Mode): по решению клиента 28.10 аналитика и реклама работают сразу, окно внизу только уведомляет.
+       Строгий режим (только после согласия): поставить 'denied' и вернуть кнопки «Принять / Отказаться» из коммита 67026bb. -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 });
-    try { if (localStorage.getItem('ks-cookie') === 'granted') gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); } catch (e) {}
+    gtag('consent', 'default', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' });
   </script>
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -42,9 +42,9 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap">
   <link rel="preload" as="image" href="img/photo/hero-mobile.webp" media="(max-width: 767px)" fetchpriority="high">
   <link rel="preload" as="image" href="img/photo/hero-desktop.webp" media="(min-width: 768px)" fetchpriority="high">
-  <link rel="stylesheet" href="css/style.css?v=20261027a">
+  <link rel="stylesheet" href="css/style.css?v=20261028a">
 
-  <script src="js/config.js?v=20261027a"></script>
+  <script src="js/config.js?v=20261028a"></script>
   <script>
     // Тема ставится до отрисовки, чтобы не мигали цвета
     (function () {
@@ -661,19 +661,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
     <div class="footer__legal">
       <p>ООО «Квант-Стиль», УНП 194031764<br>Юридический адрес: 220094, г.&nbsp;Минск, 2-й Велосипедный пер., д.&nbsp;30, каб.&nbsp;406&nbsp;Б<br>Регистрационный номер в&nbsp;Торговом реестре Республики Беларусь 786865</p>
-      <p><a href="privacy.html">Политика обработки персональных данных</a> · <button class="footer__link" type="button" data-cookie-settings>Настройки cookie</button></p>
+      <p><a href="privacy.html">Политика обработки персональных данных</a></p>
       <p>© 2026 Квант-Стиль</p>
     </div>
   </div>
 </footer>
 
-<!-- Согласие на cookie для аналитики и рекламы -->
-<div class="cookie" data-cookie role="dialog" aria-label="Файлы cookie" hidden>
+<!-- Уведомление о cookie (аналитика и реклама работают сразу) -->
+<div class="cookie" data-cookie role="region" aria-label="Файлы cookie" hidden>
   <p>Мы используем файлы cookie для аналитики и&nbsp;рекламы. Подробнее в&nbsp;<a href="privacy.html#cookie">политике</a>.</p>
-  <div class="cookie__actions">
-    <button class="btn btn--cta" type="button" data-cookie-accept>Принять</button>
-    <button class="btn btn--ghost" type="button" data-cookie-decline>Отказаться</button>
-  </div>
+  <button class="btn btn--cta" type="button" data-cookie-ok>Понятно</button>
 </div>
 
 <!-- Плавающая кнопка «Написать» (мобильные) -->
@@ -709,6 +706,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <div class="toast" role="status" aria-live="polite" data-toast></div>
 
-<script src="js/main.js?v=20261027a" defer></script>
+<script src="js/main.js?v=20261028a" defer></script>
 </body>
 </html>
